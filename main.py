@@ -12,8 +12,8 @@ print(msg)
 print(np.random.randint(1,20))
 
 def onAppStart(app):
-    app.width = 1400
-    app.height = 600
+    app.width = 1100
+    app.height = 700
     
     app.state = "testing" #intro, build, play
 
