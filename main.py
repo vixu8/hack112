@@ -12,8 +12,7 @@ print(msg)
 print(np.random.randint(1,20))
 
 def onAppStart(app):
-    app.states = "intro" #intro, build, play
-  
+    app.states = "intro" #intro, build, play  
     app.width = 1100
     app.height = 700
     
@@ -21,8 +20,6 @@ def onAppStart(app):
     app.selectedMap = None
 
     restart(app)
-
-
 
 def restart(app):
     app.state = "intro" #intro, build, play
@@ -67,6 +64,12 @@ def drawBuildMap(app):
 
 #End Drawing
 
+
+def onStep(app):
+    pass
+
+def posToCell():
+    pass
 
 def changeMapHeight(app):
     height = app.getTextInput('Enter the height of the map: ')
