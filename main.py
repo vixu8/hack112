@@ -12,11 +12,14 @@ print(msg)
 print(np.random.randint(1,20))
 
 def onAppStart(app):
-    app.scene = 'start'
+    app.states = "testing" #home. build, play
+  
     app.width = 1100
     app.height = 700
-
     
+    app.maps = [None, None, None, None]
+    app.selectedMap = None
+
     restart(app)
 
 def onStep(app):
@@ -26,11 +29,38 @@ def posToCell():
     pass
 
 def restart(app):
+    app.state = "intro" #intro, build, play
     app.rows = app.cols = 5
     changeMapWidth(app)
     changeMapHeight(app)
     app.map = Map(app.rows, app.cols)
     print(app.map)
+
+#Drawing
+
+def redrawAll(app):
+    if app.state == "testing":
+        drawBuildUI(app)
+        drawBuildMap(app)
+    elif app.state == 'intro':
+        drawIntro(app)
+
+def drawIntro(app):
+    pass
+
+def drawBuildUI(app):
+    drawRect(0, 0, app.width, 100, fill='dark')
+    pass
+
+def drawBuildMap(app):
+    pass
+
+#End Drawing
+#Loading
+def loadMap(app):
+    pass
+
+#End Loading
 
 def changeMapHeight(app):
     height = app.getTextInput('Enter the height of the map: ')
@@ -62,9 +92,6 @@ def changeMapWidth(app):
         return
     app.cols = width
 
-
-def redrawAll(app):
-    pass
 
 def onKeyPress(app, keys):
     pass
