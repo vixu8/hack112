@@ -31,9 +31,9 @@ def onAppStart(app):
 
     print(app.selectedMap)
 
-    app.char = Character("main", 100, 100, 80,30)
+    app.char = Character("main", 100, 100, 70,30)
 
-     #buttons
+    #buttons
     app.buttonLocations = set()
     app.buttonFunctions = {}
 
@@ -44,8 +44,6 @@ def onStep(app):
 
         physics(app,app.char, app.selectedMap)
 
-        
-
         app.char.x += app.char.vx
         app.char.y += app.char.vy
         app.char.updateCoords()
@@ -54,11 +52,6 @@ def onFloor(app, character, map):
     if map.getSquareType(character.botCell, character.leftCell) == "block" or map.getSquareType(character.botCell, character.rightCell) == "block":
         return True
     return False
-
-def onMousePress(app, mouseX, mouseY):
-    cellR = mouseY//40
-    cellC = mouseX//40
-    app.selectedMap.map[cellR][cellC] = 1
         
 def physics(app, character, map):
     if character.botCell < map.rows:
@@ -92,6 +85,7 @@ def physics(app, character, map):
 
 def restart(app):
     app.state = "testing" #intro, build, play
+    loadMap(app)
 
 #Loading
 def loadMap(app):
@@ -106,8 +100,8 @@ def loadMap(app):
 #Drawing
 def redrawAll(app):
     if app.state == "testing":
-        drawBuildUI(app)
-        drawBuildMap(app)
+        # drawBuildUI(app)
+        # drawBuildMap(app)
         drawMap(app)
         drawCharacter(app)
         print(app.char)
@@ -188,12 +182,6 @@ def clickLoadBuild(app):
 
 #End Button Functions
 
-def onStep(app):
-    pass
-
-def posToCell():
-    pass
-
 def changeMapHeight(app):
     height = app.getTextInput('Enter the height of the map: ')
     isInt = height.isdigit()
@@ -223,12 +211,6 @@ def changeMapWidth(app):
         changeMapWidth(app)
         return
     app.cols = width
-
-def onStep(app):
-    pass
-
-def posToCell():
-    pass
 
 def onKeyPress(app, keys):
     map = app.selectedMap
@@ -266,6 +248,12 @@ def onKeyRelease(app, keys):
 
 def onMousePress(app, mouseX, mouseY):
     #check buttons
+    if app.state == "testing":
+        cellR = mouseY//40
+        cellC = mouseX//40
+        app.selectedMap.map[cellR][cellC] = 1
+
+
     for location in app.buttonLocations:
         isBetweenX = location[0][0] <= mouseX <= location[1][0]
         isBetweenY = location[0][1] <= mouseY <= location[1][1]
