@@ -1,3 +1,4 @@
+import copy
 class Map:
 
     def __init__(self, rows, cols):
@@ -34,9 +35,11 @@ class Map:
         return self.map
     
     def transfer(self, array):
-        self.rows = len(array)
+        self.rows = len(array)-10
         self.cols = len(array[0])
-        self.map = [[0 for i in range(self.cols)] for j in range(self.rows+10)] #10 extra hidden rows on top
-        for r in range(len(array)):
-            for c in range(len(array[0])):
-                self.map[r+10][c] = array[r][c]
+
+        self.map = copy.deepcopy(array)
+        # self.map = [[0 for i in range(self.cols)] for j in range(len(array))]
+        # for r in range(len(array)):
+        #     for c in range(len(array[0])):
+        #         self.map[r][c] = array[r][c]
