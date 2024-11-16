@@ -16,7 +16,7 @@ def onAppStart(app):
     app.width = 1100
     app.height = 700
     
-    app.selectedMap = None
+    app.map = None
 
     #buttons
     app.buttonLocations = set()
@@ -35,7 +35,6 @@ def loadMap(app):
     changeMapHeight(app)
     app.map = Map(app.rows, app.cols)
     app.state = 'build'
-    print(app.map)
 
 def loadBuildOne(app):
     f = open('build1.txt', 'r')
@@ -47,7 +46,7 @@ def loadBuildOne(app):
     f = open('build1.txt', 'r')
     readMap = f.read()
     app.map = parseMap(readMap)
-    app.state = 'intro'
+    app.state = 'build'
     f.close()
     return
 def loadBuildTwo(app):
@@ -60,7 +59,7 @@ def loadBuildTwo(app):
     f = open('build2.txt', 'r')
     readMap = f.read()
     app.map = parseMap(readMap)
-    app.state = 'intro'
+    app.state = 'build'
     f.close()
     return
 def loadBuildThree(app):
@@ -73,7 +72,7 @@ def loadBuildThree(app):
     f = open('build3.txt', 'r')
     readMap = f.read()
     app.map = parseMap(readMap)
-    app.state = 'intro'
+    app.state = 'build'
     f.close()
     return
 def loadBuildFour(app):
@@ -86,7 +85,7 @@ def loadBuildFour(app):
     f = open('build4.txt', 'r')
     readMap = f.read()
     app.map = parseMap(readMap)
-    app.state = 'intro'
+    app.state = 'build'
     f.close()
     return
 
@@ -103,6 +102,7 @@ def saveBuildTwo(app):
     f = open('build2.txt', 'w')
     map = app.map.getMap()
     write = f'{map}'
+    print(write)
     f.write(write)
     f.close()
 def saveBuildThree(app):
@@ -168,20 +168,25 @@ def drawLoad(app):
     #Buttons to load in builds
     buttonWidth = 150
     gap = 200/3
-    build1Empty = build2Empty = build3Empty = build4Empty = True
-    empty = {1:build2Empty, 2:build3Empty, 3:build4Empty}
+    build1Empty = build2Empty = build3Empty = build4Empty = False
+    
     build1 = open('build1.txt', 'r')
-    if build1.read() != '':
-        build1Empty = False
+    if build1.read() == '':
+        build1Empty = True
+    build1.close()
     build2 = open('build2.txt', 'r')
-    if build2.read() != '':
-        build2Empty = False
+    if build2.read() == '':
+        build2Empty = True
+    build2.close()
     build3 = open('build3.txt', 'r')
-    if build3.read() != '':
-        build3Empty = False
+    if build3.read() == '':
+        build3Empty = True
+    build3.close()
     build4 = open('build4.txt', 'r')
-    if build4.read() != '':
-        build4Empty = False
+    if build4.read() == '':
+        build4Empty = True
+    build4.close()
+    empty = {1:build2Empty, 2:build3Empty, 3:build4Empty}
 
     for i in range(0, 4): #left two buttons
         loads = {1:loadBuildTwo, 2:loadBuildThree, 3:loadBuildFour}
@@ -191,6 +196,7 @@ def drawLoad(app):
             if build1Empty: drawLabel('Empty Build 1', 150+i*buttonWidth + 1/2*buttonWidth, app.height/2+100, fill='white', size=16)
             else: drawLabel('Build 1', 150+i*buttonWidth + 1/2*buttonWidth, app.height/2+100, fill='white', size=16)
         else:
+            print(i, empty[i])
             drawRect(150+i*buttonWidth+gap*i, app.height/2, buttonWidth, 200, fill='midnightblue')
             newButton(app, 150+i*buttonWidth+gap*i, app.height/2, 150+i*buttonWidth+buttonWidth+gap*i, app.height/2+200, loads[i], 'load')
             if empty[i]: drawLabel(f'Empty Build {i+1}', 150+i*buttonWidth+gap*i + buttonWidth/2, app.height/2+100, fill='white', size=16)
@@ -266,10 +272,26 @@ def changeMapWidth(app):
     app.cols = width
 
 def parseMap(map):
-    pass
+    returnMap = []
+    map = map.strip('[[')
+    map = map.strip(']]')
+    listComas = map.split('], [')
+    for comad in listComas:
+        addList = []
+        for c in comad:
+            if c.isdigit():
+                addList.append(int(c))
+        returnMap.append(addList)
+    return returnMap
+
+def find(L, n):
+    for i in range(len(L)):
+        if L[i] == n:
+            return i
+    return -1
 
 def onStep(app):
-    pass
+    if app.state == 'build' and app.map == None: loadMap(app)
 
 def posToCell():
     pass
