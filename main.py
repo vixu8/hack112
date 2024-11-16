@@ -11,8 +11,13 @@ print(msg)
 print(np.random.randint(1,20))
 
 def onAppStart(app):
-    pass
+    restart(app)
 
+def restart(app):
+    app.row, app.col = 0
+
+def promptUser(app):
+    
 
 def redrawAll(app):
     pass
