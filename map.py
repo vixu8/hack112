@@ -29,7 +29,8 @@ class Map:
         return res
     
     def setBlock(self, row, col, block):
-        self.map[int(row)+10][int(col)] = block
+        if 0<= int(row)+10 < len(self.map) and 0<= int(col) < len(self.map[0]):
+            self.map[int(row)+10][int(col)] = block
     
     def getMap(self):
         return self.map

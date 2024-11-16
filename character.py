@@ -6,6 +6,11 @@ class Character:
         self.type = kind
         self.x = initx
         self.y = inity
+
+        self.spawnx = initx
+        self.spawny = inity
+
+
         self.height = height
         self.width = width
         self.vx = 0
@@ -35,10 +40,12 @@ class Character:
         self.rightCell = self.right//40
 
     def setPosition(self, x, y):
-        if isinstance(x, float) and isinstance(y, float):
-            self.x = x
-            self.y = y
+        self.x = x
+        self.y = y
     
+    def goSpawn( self):
+        self.setPosition(self.spawnx, self.spawny)
+
     def getPosition(self):
         return (self.x, self.y)
     

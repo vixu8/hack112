@@ -25,17 +25,19 @@ def onAppStart(app):
     app.height = 700 #400
 
     app.blockPx = 40
+
     app.selectedBlock = 0 #0 for air, 1 for wall, 2 for death, 3 spawn, 4 finish
     
     app.g = 10 #gravity, in terms of pixels
+    app.deaths = 0
 
-    app.maps = [None, None, None, None]
     app.selectedMap = None
 
     app.blockType = 0
     app.spawnPoint = None
-    app.cellSize = 40
+    app.cellSize = None
 
+    app.won = False
 
     print(app.selectedMap)
 
@@ -47,12 +49,15 @@ def onAppStart(app):
     restart(app)
 
 def onStep(app):
-    app.spawnPoint = findSpawn(app)
+    print(app.state)
+
     if app.state == 'build' and app.selectedMap == None: loadMap(app)
 
-    elif app.state == "play":
+    elif app.state == "play" and app.won == False:
 
         physics(app,app.char, app.selectedMap)
+        die(app, app.char, app.selectedMap)
+        win(app, app.char, app.selectedMap)
 
         app.char.x += app.char.vx
         app.char.y += app.char.vy
@@ -64,7 +69,24 @@ def onFloor(app, character, map):
     if map.getSquareType(character.botCell, character.leftCell) == "block" or map.getSquareType(character.botCell, character.rightCell) == "block":
         return True
     return False
-        
+
+def die(app, character, map):
+    if ((character.botCell < map.rows and map.getSquareType(character.botCell, character.leftCell) == "death"
+         or map.getSquareType(character.botCell, character.rightCell) == "death") or
+        (character.topCell >= 0 and map.getSquareType(character.topCell, character.leftCell) == "death"
+          or map.getSquareType(character.topCell, character.rightCell) == "death")):
+        print("DIEEE")
+        app.deaths += 1
+        character.goSpawn()
+
+def win(app, character, map):
+    if ((character.botCell < map.rows and map.getSquareType(character.botCell, character.leftCell) == "end"
+         or map.getSquareType(character.botCell, character.rightCell) == "end") or
+        (character.topCell >= 0 and map.getSquareType(character.topCell, character.leftCell) == "end"
+          or map.getSquareType(character.topCell, character.rightCell) == "end")):
+        print("won")
+        app.won=True
+
 def physics(app, character, map):
     
     if character.botCell >= map.rows or map.getSquareType(character.botCell, character.leftCell) == "block" or map.getSquareType(character.botCell, character.rightCell) == "block":
@@ -90,14 +112,18 @@ def physics(app, character, map):
 
 def startPlay(app):
     charLocation = findSpawn(app)
+    print(charLocation, "SAWNB")
     app.cam = Camera(0, 0, app.width, app.height)
+    app.won = False
     if charLocation != None:
-        print(charLocation)
-        charx = (charLocation[1]+1)*app.cellSize
-        chary = (charLocation[0]-10+1)*app.cellSize
-        app.char = Character("main", charx, app.cellSize*app.selectedMap.rows - chary, 80,30)
+        charR, charC = charLocation
+        # charx = (charLocation[1]+1)*app.cellSize
+        # chary = (charLocation[0]-10+1)*app.cellSize
+        app.char = Character("main", (charR-1)*app.blockPx, app.blockPx*charC + 15, 70,30)
+        print(app.char)
+        print("cell size", app.cellSize)
     else:
-        app.char = Character("main", 0, 0, 80,30)
+        app.char = Character("main", 0, 0, 70,30)
     
 
 
@@ -111,6 +137,8 @@ def loadMap(app):
     val2 = changeMapHeight(app)
     if val1 == None and val2 == None:
         app.selectedMap = Map(app.rows, app.cols)
+        app.spawnPoint = findSpawn(app)
+
         app.cellSize = min((app.width-200)/(app.selectedMap.cols), (app.height-100)/(app.selectedMap.rows))
         app.state = 'build'
 
@@ -212,8 +240,14 @@ def saveBuildFour(app):
 #Drawing
 def redrawAll(app):
     if app.state == "play":
+
         drawMap(app)
         drawCharacter(app)
+        if app.won:
+            drawLabel("good job", 100,100, size=50, fill="green")
+            drawLabel("p to go again", 100, 200, size=30, fill="purple")
+        drawLabel(f"Deaths: {app.deaths}", 800, 100, fill="red", size=30)
+
     elif app.state == 'intro':
         drawIntro(app)
     elif app.state == 'load':
@@ -360,15 +394,15 @@ def drawMap(app):
         for c in range(app.selectedMap.cols):
             cell = app.selectedMap.getSquareType(r,c)
             if cell == "empty":
-                drawRect(40*c-app.cam.offsetC, 40*r-app.cam.offsetR, 40,40,fill="white", border="black")
+                drawRect(40*c-app.cam.offsetC, 40*r-app.cam.offsetR, 40,40,fill="white")
             elif cell == "block":
-                drawRect(40*c-app.cam.offsetC, 40*r-app.cam.offsetR, 40,40,fill="blue", border="black")
+                drawRect(40*c-app.cam.offsetC, 40*r-app.cam.offsetR, 40,40,fill="blue")
             elif cell == 'death':
-                drawRect(40*c-app.cam.offsetC, 40*r-app.cam.offsetR, 40,40,fill="red", border="black")
+                drawRect(40*c-app.cam.offsetC, 40*r-app.cam.offsetR, 40,40,fill="red")
             elif cell == 'spawn':
-                drawRect(40*c-app.cam.offsetC, 40*r-app.cam.offsetR, 40,40,fill="green", border="black")
+                drawRect(40*c-app.cam.offsetC, 40*r-app.cam.offsetR, 40,40,fill="green")
             elif cell == 'end':
-                drawRect(40*c-app.cam.offsetC, 40*r-app.cam.offsetR, 40,40,fill="yellow", border="black")
+                drawRect(40*c-app.cam.offsetC, 40*r-app.cam.offsetR, 40,40,fill="yellow")
 
 def drawCharacter(app):
     drawRect(app.char.left-app.cam.offsetC, app.char.top-app.cam.offsetR, app.char.width, app.char.height, fill="red")
@@ -465,8 +499,16 @@ def onKeyPress(app, keys):
     elif 'p' in keys and app.state == 'build': 
         startPlay(app)
         app.state = "play"
-     
+        app.won = False
+        app.deaths = 0
+
     if app.state == "play":
+        if 'p' in keys:
+            startPlay(app)
+            app.won = False
+            app.deaths = 0
+
+
         if 'escape' in keys:
             app.state = 'intro'
         map = app.selectedMap
@@ -504,13 +546,22 @@ def onKeyRelease(app, keys):
         if "a" in keys:
             app.char.vy = 0
 
-def onMousePress(app, mouseX, mouseY):
-    #check buttons
+def onMouseDrag(app, mouseX, mouseY):
     if app.state == "build":
-        if 700 >= mouseY >= 100 and 0 <= mouseX <= 800:
+        if app.height > mouseY > 100 and 0 < mouseX < app.width-200:
             cellR = (mouseY-100)//app.cellSize
             cellC = (mouseX)//app.cellSize
             app.selectedMap.setBlock(cellR, cellC, app.selectedBlock)
+            print("clicked blokc", cellR, cellC)
+
+def onMousePress(app, mouseX, mouseY):
+    #check buttons
+    if app.state == "build":
+        if app.height > mouseY > 100 and 0 < mouseX < app.width-200:
+            cellR = (mouseY-100)//app.cellSize
+            cellC = (mouseX)//app.cellSize
+            app.selectedMap.setBlock(cellR, cellC, app.selectedBlock)
+            print("clicked blokc", cellR, cellC)
 
     for location in app.buttonLocations:
         isBetweenX = location[0][0] <= mouseX <= location[1][0]
@@ -526,7 +577,7 @@ def findSpawn(app):
         for row in range(rows):
             for col in range(cols):
                 if map[row][col] == 3:
-                    return (row, col)
+                    return (row-10, col)
     return None
 
 def main():
