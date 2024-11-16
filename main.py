@@ -159,7 +159,7 @@ def drawBuildUI(app):
     #Save Button
     saveButtonSize = 100
     drawLabel('SAVE', 450, 50, size=saveButtonSize, fill='white', opacity=50)
-    newButton(app, 0, 0, 130+saveButtonSize+50, 50+saveButtonSize, clickMenu, 'build')
+    newButton(app, 450-saveButtonSize/2, 0, 450+saveButtonSize+50, 50+saveButtonSize, clickSaveBuild, 'build')
 
 def drawLoad(app):
     drawRect(0, 0, app.width, app.height, fill='darkblue', opacity=70)
@@ -188,13 +188,13 @@ def drawLoad(app):
         if i == 0:
             drawRect(150+i*buttonWidth, app.height/2, buttonWidth, 200, fill='midnightblue')
             newButton(app, 150+i*buttonWidth, app.height/2, 150+i*buttonWidth+buttonWidth, app.height/2+200, loadBuildOne, 'load')
-            if build1Empty: drawLabel('Empty Build 1', 150+i*buttonWidth + 1/2*buttonWidth, app.height/2+100)
-            else: drawLabel('Build 1', 150+i*buttonWidth + 1/2*buttonWidth, app.height/2+100)
+            if build1Empty: drawLabel('Empty Build 1', 150+i*buttonWidth + 1/2*buttonWidth, app.height/2+100, fill='white', size=16)
+            else: drawLabel('Build 1', 150+i*buttonWidth + 1/2*buttonWidth, app.height/2+100, fill='white', size=16)
         else:
             drawRect(150+i*buttonWidth+gap*i, app.height/2, buttonWidth, 200, fill='midnightblue')
             newButton(app, 150+i*buttonWidth+gap*i, app.height/2, 150+i*buttonWidth+buttonWidth+gap*i, app.height/2+200, loads[i], 'load')
-            if empty[i]: drawLabel(f'Empty Build {i+1}', 150+i*buttonWidth+gap*i + buttonWidth/2, app.height/2+100)
-            else: drawLabel(f'Build {i+1}', 150+i*buttonWidth+gap*i + buttonWidth/2, app.height/2+100)
+            if empty[i]: drawLabel(f'Empty Build {i+1}', 150+i*buttonWidth+gap*i + buttonWidth/2, app.height/2+100, fill='white', size=16)
+            else: drawLabel(f'Build {i+1}', 150+i*buttonWidth+gap*i + buttonWidth/2, app.height/2+100, fill='white', size=16)
 
 
 def drawBuildMap(app):
@@ -213,12 +213,29 @@ def newButton(app, toplx, toply, botrx, botry, func, state):
 def clickMenu(app): app.state = 'intro'
 def clickEditBuild(app): app.state = 'build'
 def clickLoadBuild(app): app.state = 'load'
+def clickSaveBuild(app):
+    saveBuilds = {1:saveBuildOne, 2:saveBuildTwo, 3:saveBuildThree, 4:saveBuildFour}
+    buildNumber = app.getTextInput('Enter the number (integer) of the build you want to save to: ')
+    isInt = buildNumber.isdigit()
+    if buildNumber == '': return
+    if not isInt:
+        app.showMessage('Please enter an integer!')
+        changeMapHeight(app)
+        return
+    buildNumber = int(buildNumber)
+    if 0 >= buildNumber >= 5:
+        app.showMessage('Please enter an integer between 1 and 4!')
+        changeMapHeight(app)
+        return
+    saveBuilds[buildNumber](app)
 
 #End Button Functions
 
 def changeMapHeight(app):
     height = app.getTextInput('Enter the height of the map: ')
     isInt = height.isdigit()
+    if height == '':
+        return
     if not isInt:
         app.showMessage('Please enter an integer!')
         changeMapHeight(app)
@@ -234,6 +251,8 @@ def changeMapHeight(app):
 def changeMapWidth(app):
     width = app.getTextInput('Enter the width of the map: ')
     isInt = width.isdigit()
+    if width == '':
+        return
     if not isInt:
         app.showMessage('Please enter an integer!')
         changeMapWidth(app)
