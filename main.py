@@ -27,9 +27,6 @@ def onAppStart(app):
     app.maps = [None, None, None, None]
     app.selectedMap = Map(15,20)
 
-    for  i in range(5):
-        app.selectedMap.map[10+i][10] = 1
-
     print(app.selectedMap)
 
     app.char = Character("main", 100, 100, 80,30)
@@ -41,10 +38,21 @@ def onStep(app):
 
         physics(app,app.char, app.selectedMap)
 
+        
+
         app.char.x += app.char.vx
         app.char.y += app.char.vy
         app.char.updateCoords()
 
+def onFloor(app, character, map):
+    if map.getSquareType(character.botCell, character.leftCell) == "block" or map.getSquareType(character.botCell, character.rightCell) == "block":
+        return True
+    return False
+
+def onMousePress(app, mouseX, mouseY):
+    cellR = mouseY//40
+    cellC = mouseX//40
+    app.selectedMap.map[cellR][cellC] = 1
         
 def physics(app, character, map):
     if character.botCell < map.rows:
@@ -52,7 +60,23 @@ def physics(app, character, map):
             character.vx = 0
             character.x = (character.botCell)*app.blockPx - character.height/2
         else: character.vx += app.g/5
+    
+    if character.topCell >= 0:
+        if map.getSquareType(character.topCell, character.leftCell) == "block" or map.getSquareType(character.topCell, character.rightCell) == "block":
+            character.vx = 0
+            character.x = (character.topCell+1)*app.blockPx + character.height/2
 
+    if character.vy < 0:
+        if (character.left+character.vy) >= 0:
+            if map.getSquareType(character.botCell- (1 if onFloor(app, character, map) else 0), (character.left+character.vy)//40) == "block" or map.getSquareType(character.topCell, (character.left+character.vy)//40) == "block":
+                character.vy = 0
+                character.y = (character.leftCell)*app.blockPx + character.width/2
+
+    if character.vy >= 0:
+        if (character.right+character.vy) < app.blockPx*map.cols:
+            if map.getSquareType(character.botCell- (1 if onFloor(app, character, map) else 0), (character.right+character.vy)//40) == "block" or map.getSquareType(character.topCell, (character.right+character.vy)//40) == "block":
+                character.vy = 0
+                character.y = (character.rightCell+1)*app.blockPx - (character.width/2 + 2)
     
 
 # def startPlay(app):
