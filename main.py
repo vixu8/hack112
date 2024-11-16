@@ -12,6 +12,8 @@ print(msg)
 print(np.random.randint(1,20))
 
 def onAppStart(app):
+    app.states = "testing" #home. build, play
+  
     app.width = 1100
     app.height = 700
     
@@ -19,6 +21,12 @@ def onAppStart(app):
     app.selectedMap = None
 
     restart(app)
+
+def onStep(app):
+    pass
+
+def posToCell():
+    pass
 
 def restart(app):
     app.state = "intro" #intro, build, play
