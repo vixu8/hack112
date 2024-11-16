@@ -20,8 +20,9 @@ def onAppStart(app):
   
     app.states = ["intro", 'build', 'play', 'load'] #intro, build, play, load
 
-    app.width = 1100
-    app.height = 700
+    app.width = 1100 #640
+    app.height = 700 #400
+
 
     app.blockPx = 40
     app.selectedBlock = 0 #0 for air, 1 for wall, 2 for death, 3 spawn, 4 finish
@@ -33,6 +34,10 @@ def onAppStart(app):
     app.maps = [None, None, None, None]
     app.selectedMap = None
 
+    app.blockType = 0
+    app.cellSize = 40
+
+
     print(app.selectedMap)
 
     
@@ -43,7 +48,7 @@ def onAppStart(app):
     restart(app)
 
 def onStep(app):
-    if app.state == 'build' and app.map == None: loadMap(app)
+    if app.state == 'build' and app.selectedMap == None: loadMap(app)
 
     elif app.state == "play":
 
@@ -83,9 +88,9 @@ def physics(app, character, map):
             character.y = (character.rightCell+1)*app.blockPx - (character.width/2 + 2)
     
 
-# def startPlay(app):
-#     loadMap()
-#     app.char = Character("main", 0, 0, 80,30)
+def startPlay(app):
+    app.char = Character("main", 0, 0, 80,30)
+    app.cam = Camera(0, 0, app.width, app.height)
 
 
 def restart(app):
@@ -97,7 +102,8 @@ def loadMap(app):
     changeMapWidth(app)
     changeMapHeight(app)
 
-    app.map = Map(app.rows, app.cols)
+    app.selectedMap = Map(app.rows, app.cols)
+    app.cellSize = min((app.width-200)/(app.selectedMap.cols), (app.height-100)/(app.selectedMap.rows))
     app.state = 'build'
 
 def loadBuildOne(app):
@@ -109,20 +115,27 @@ def loadBuildOne(app):
         return
     f = open('build1.txt', 'r')
     readMap = f.read()
-    app.map = parseMap(readMap)
+    temp = parseMap(readMap)
+    app.selectedMap = Map(len(temp), len(temp[0]))
+    app.selectedMap.transfer(temp)
+    app.cellSize = min((app.width-200)/(app.selectedMap.cols), (app.height-100)/(app.selectedMap.rows))
     app.state = 'build'
     f.close()
     return
 def loadBuildTwo(app):
     f = open('build2.txt', 'r')
     isEmpty = f.read() == ''
+    print(f.read(), '', isEmpty)
     f.close()
     if isEmpty:
         loadMap(app)
         return
     f = open('build2.txt', 'r')
     readMap = f.read()
-    app.map = parseMap(readMap)
+    temp = parseMap(readMap)
+    app.selectedMap = Map(len(temp), len(temp[0]))
+    app.selectedMap.transfer(temp)
+    app.cellSize = min((app.width-200)/(app.selectedMap.cols), (app.height-100)/(app.selectedMap.rows))
     app.state = 'build'
     f.close()
     return
@@ -135,7 +148,10 @@ def loadBuildThree(app):
         return
     f = open('build3.txt', 'r')
     readMap = f.read()
-    app.map = parseMap(readMap)
+    temp = parseMap(readMap)
+    app.selectedMap = Map(len(temp), len(temp[0]))
+    app.selectedMap.transfer(temp)
+    app.cellSize = min((app.width-200)/(app.selectedMap.cols), (app.height-100)/(app.selectedMap.rows))
     app.state = 'build'
     f.close()
     return
@@ -148,7 +164,10 @@ def loadBuildFour(app):
         return
     f = open('build4.txt', 'r')
     readMap = f.read()
-    app.map = parseMap(readMap)
+    temp = parseMap(readMap)
+    app.selectedMap = Map(len(temp), len(temp[0]))
+    app.selectedMap.transfer(temp)
+    app.cellSize = min((app.width-200)/(app.selectedMap.cols), (app.height-100)/(app.selectedMap.rows))
     app.state = 'build'
     f.close()
     return
@@ -300,9 +319,24 @@ def drawLoad(app):
 
 
 def drawBuildMap(app):
-    drawMap(app)
+    if app.selectedMap == None:
+        return
+    drawRect(0,100,app.width-200,app.height-100, fill="gray")
+    
+    for r in range(app.selectedMap.rows):
+            for c in range(app.selectedMap.cols):
+                cell = app.selectedMap.getSquareType(r,c)
+                if cell == "empty":
+                    drawRect(app.cellSize*c, app.cellSize*r + 100, app.cellSize,app.cellSize,fill="white", border="black")
+                if cell == "block":
+                    drawRect(app.cellSize*c, app.cellSize*r + 100, app.cellSize,app.cellSize,fill="blue", border="black")
+    pass
+
+
 
 def drawMap(app):
+    if app.selectedMap == None:
+        return
     drawRect(0, 0, app.width, app.height, fill="gray")
     for r in range(app.selectedMap.rows):
         for c in range(app.selectedMap.cols):
@@ -400,6 +434,7 @@ def parseMap(map):
 def onKeyPress(app, keys):
     if 'escape' in keys and app.state == 'load': app.state = 'intro'
     if 'escape' in keys and app.state == 'build': app.state = 'intro'
+    elif 'p' in keys and app.state == 'build': app.state = "play"
      
     if app.state == "play":
         map = app.selectedMap
@@ -440,10 +475,12 @@ def onKeyRelease(app, keys):
 
 def onMousePress(app, mouseX, mouseY):
     #check buttons
-    if app.state == "testing":
-        cellR = mouseY//40
-        cellC = mouseX//40
-        app.selectedMap.setBlock(cellR, cellC, app.selectedBlock)
+    if app.state == "build":
+        if 700 >= mouseY >= 100 and 0 <= mouseX <= 800:
+            cellR = (mouseY-100)//app.cellSize
+            cellC = (mouseX-100)//app.cellSize
+            app.selectedMap.setBlock(cellR, cellC, app.blockType)
+
 
 
     for location in app.buttonLocations:
