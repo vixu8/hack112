@@ -1,17 +1,7 @@
-import numpy as np
 from cmu_graphics import *
-from types import SimpleNamespace
-import os
-import time
-import random
 from map import *
 from character import *
 from camera import *
-
-msg = "Roll for initiative:"
-print(msg)
-
-print(np.random.randint(1,20))
 
 def onAppStart(app):
     app.stepsPerSecond = 100
@@ -405,7 +395,7 @@ def drawMap(app):
                 drawRect(40*c-app.cam.offsetC, 40*r-app.cam.offsetR, 40,40,fill="yellow")
 
 def drawCharacter(app):
-    drawRect(app.char.left-app.cam.offsetC, app.char.top-app.cam.offsetR, app.char.width, app.char.height, fill="red")
+    drawRect(app.char.left-app.cam.offsetC, app.char.top-app.cam.offsetR, app.char.width, app.char.height, fill="purple")
 
 #End Drawing
 
