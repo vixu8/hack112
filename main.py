@@ -347,8 +347,14 @@ def drawMap(app):
             cell = app.selectedMap.getSquareType(r,c)
             if cell == "empty":
                 drawRect(40*c-app.cam.offsetC, 40*r-app.cam.offsetR, 40,40,fill="white", border="black")
-            if cell == "block":
+            elif cell == "block":
                 drawRect(40*c-app.cam.offsetC, 40*r-app.cam.offsetR, 40,40,fill="blue", border="black")
+            elif cell == 'death':
+                drawRect(40*c-app.cam.offsetC, 40*r-app.cam.offsetR, 40,40,fill="red", border="black")
+            elif cell == 'spawn':
+                drawRect(40*c-app.cam.offsetC, 40*r-app.cam.offsetR, 40,40,fill="green", border="black")
+            elif cell == 'end':
+                drawRect(40*c-app.cam.offsetC, 40*r-app.cam.offsetR, 40,40,fill="yellow", border="black")
 
 def drawCharacter(app):
     drawRect(app.char.left-app.cam.offsetC, app.char.top-app.cam.offsetR, app.char.width, app.char.height, fill="red")
@@ -440,10 +446,12 @@ def parseMap(map):
 def onKeyPress(app, keys):
     if 'escape' in keys and app.state == 'load': app.state = 'intro'
     if 'escape' in keys and app.state == 'build': app.state = 'intro'
-    elif 'p' in keys and app.state == 'build': app.state = "play"
+    elif 'p' in keys and app.state == 'build': 
+        startPlay(app)
+        app.state = "play"
      
     if app.state == "play":
-        startPlay(app)
+        
         map = app.selectedMap
 
         if "w" in keys:
@@ -494,6 +502,7 @@ def onMousePress(app, mouseX, mouseY):
         isState = app.state == location[2]
         if (isBetweenX) and (isBetweenY) and (isState):
             app.buttonFunctions[location](app)
+
 
 def main():
     print("blehh")
