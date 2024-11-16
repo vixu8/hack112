@@ -12,6 +12,11 @@ print(msg)
 print(np.random.randint(1,20))
 
 def onAppStart(app):
+    app.state = "testing" #intro, build, play
+
+    app.maps = [None, None, None, None]
+    app.selectedMap = None
+
     restart(app)
 
 def restart(app):
@@ -20,6 +25,17 @@ def restart(app):
     changeMapHeight(app)
     app.map = Map(app.rows, app.cols)
     print(app.map)
+
+def redrawAll(app):
+    if app.state == "testing":
+
+    pass
+
+def drawBuildUI(app):
+    pass
+
+def drawBuildMap(app):
+    pass
 
 def changeMapHeight(app):
     height = app.getTextInput('Enter the height of the map: ')
@@ -51,9 +67,6 @@ def changeMapWidth(app):
         return
     app.cols = width
 
-
-def redrawAll(app):
-    pass
 
 def onKeyPress(app, keys):
     pass
