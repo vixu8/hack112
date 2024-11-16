@@ -12,36 +12,47 @@ print(msg)
 print(np.random.randint(1,20))
 
 def onAppStart(app):
-    app.width = 1400
-    app.height = 600
+    app.width = 1100
+    app.height = 700
     
-    app.state = "testing" #intro, build, play
-
     app.maps = [None, None, None, None]
     app.selectedMap = None
 
     restart(app)
 
 def restart(app):
+    app.state = "intro" #intro, build, play
     app.rows = app.cols = 5
     changeMapWidth(app)
     changeMapHeight(app)
     app.map = Map(app.rows, app.cols)
     print(app.map)
 
+#Drawing
+
 def redrawAll(app):
     if app.state == "testing":
-        drawBuildUI()
-        drawBuildMap()
+        drawBuildUI(app)
+        drawBuildMap(app)
+    elif app.state == 'intro':
+        drawIntro(app)
+
+def drawIntro(app):
     pass
 
 def drawBuildUI(app):
-
-
+    drawRect(0, 0, app.width, 100, fill='dark')
     pass
 
 def drawBuildMap(app):
     pass
+
+#End Drawing
+#Loading
+def loadMap(app):
+    pass
+
+#End Loading
 
 def changeMapHeight(app):
     height = app.getTextInput('Enter the height of the map: ')
