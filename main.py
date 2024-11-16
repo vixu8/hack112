@@ -192,8 +192,8 @@ def redrawAll(app):
     elif app.state == 'load':
         drawLoad(app)
     elif app.state == 'build':
-        drawBuildUI(app)
         drawBuildMap(app)
+        drawBuildUI(app)
 
 def drawIntro(app):
     drawRect(0, 0, app.width, app.height, fill='darkblue', opacity=70)
@@ -238,25 +238,25 @@ def drawBuildUI(app):
     wallButtonSize = 100
     drawRect(1000-wallButtonSize/2, 233-wallButtonSize/2, wallButtonSize, wallButtonSize, fill='blue')
     drawLabel('Wall', 1000, 233, size=32, fill='white', opacity=50)
-    newButton(app, 1000-wallButtonSize/2, 100-wallButtonSize/2, 1000-wallButtonSize/2 + wallButtonSize, 100-wallButtonSize/2 + wallButtonSize, clickWall, 'build')
+    newButton(app, 1000-wallButtonSize/2, 233-wallButtonSize/2, 1000-wallButtonSize/2 + wallButtonSize, 100-wallButtonSize/2 + wallButtonSize, clickWall, 'build')
 
     #Death button
     airButtonSize = 100
     drawRect(1000-airButtonSize/2, 366-airButtonSize/2, airButtonSize, airButtonSize, fill='red')
     drawLabel('Death', 1000, 366, size=32, fill='black', opacity=50)
-    newButton(app, 1000-airButtonSize/2, 100-airButtonSize/2, 1000-airButtonSize/2 + airButtonSize, 100-airButtonSize/2 + airButtonSize, clickDeath, 'build')
+    newButton(app, 1000-airButtonSize/2, 366-airButtonSize/2, 1000-airButtonSize/2 + airButtonSize, 100-airButtonSize/2 + airButtonSize, clickDeath, 'build')
 
     #Spawn button
     airButtonSize = 100
     drawRect(1000-airButtonSize/2, 500-airButtonSize/2, airButtonSize, airButtonSize, fill='green')
     drawLabel('Spawn', 1000, 500, size=32, fill='black', opacity=50)
-    newButton(app, 1000-airButtonSize/2, 100-airButtonSize/2, 1000-airButtonSize/2 + airButtonSize, 100-airButtonSize/2 + airButtonSize, clickSpawn, 'build')
+    newButton(app, 1000-airButtonSize/2, 500-airButtonSize/2, 1000-airButtonSize/2 + airButtonSize, 100-airButtonSize/2 + airButtonSize, clickSpawn, 'build')
     
     #End button
     airButtonSize = 100
     drawRect(1000-airButtonSize/2, 633-airButtonSize/2, airButtonSize, airButtonSize, fill='yellow')
     drawLabel('End', 1000, 633, size=32, fill='black', opacity=50)
-    newButton(app, 1000-airButtonSize/2, 100-airButtonSize/2, 1000-airButtonSize/2 + airButtonSize, 100-airButtonSize/2 + airButtonSize, clickEnd, 'build')
+    newButton(app, 1000-airButtonSize/2, 633-airButtonSize/2, 1000-airButtonSize/2 + airButtonSize, 100-airButtonSize/2 + airButtonSize, clickEnd, 'build')
 
 def drawLoad(app):
     drawRect(0, 0, app.width, app.height, fill='darkblue', opacity=70)
@@ -300,7 +300,7 @@ def drawLoad(app):
 
 
 def drawBuildMap(app):
-    pass
+    drawMap(app)
 
 def drawMap(app):
     drawRect(0, 0, app.width, app.height, fill="gray")
@@ -367,7 +367,6 @@ def changeMapHeight(app):
         changeMapHeight(app)
         return
     app.rows = height
-
 def changeMapWidth(app):
     width = app.getTextInput('Enter the width of the map: ')
     isInt = width.isdigit()
