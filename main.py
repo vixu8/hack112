@@ -12,6 +12,9 @@ print(msg)
 print(np.random.randint(1,20))
 
 def onAppStart(app):
+    app.width = 1400
+    app.height = 600
+    
     app.state = "testing" #intro, build, play
 
     app.maps = [None, None, None, None]
@@ -28,10 +31,13 @@ def restart(app):
 
 def redrawAll(app):
     if app.state == "testing":
-
+        drawBuildUI()
+        drawBuildMap()
     pass
 
 def drawBuildUI(app):
+
+
     pass
 
 def drawBuildMap(app):
