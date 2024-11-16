@@ -1,6 +1,9 @@
 import numpy as np
 from cmu_graphics import *
 from types import SimpleNamespace
+import os
+import time
+import random
 
 msg = "Roll for initiative:"
 print(msg)
@@ -12,6 +15,9 @@ def onAppStart(app):
 
 
 def redrawAll(app):
+    pass
+
+def onKeyPress(app, keys):
     pass
 
 def main():
