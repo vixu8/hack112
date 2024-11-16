@@ -33,7 +33,7 @@ def onAppStart(app):
     app.selectedMap = None
 
     app.blockType = 0
-    app.cellSize = None
+    app.cellSize = 40
 
 
     print(app.selectedMap)
@@ -46,7 +46,7 @@ def onAppStart(app):
     restart(app)
 
 def onStep(app):
-    if app.state == 'build' and app.map == None: loadMap(app)
+    if app.state == 'build' and app.selectedMap == None: loadMap(app)
 
     elif app.state == "play":
 
@@ -100,7 +100,8 @@ def loadMap(app):
     changeMapWidth(app)
     changeMapHeight(app)
 
-    app.map = Map(app.rows, app.cols)
+    app.selectedMap = Map(app.rows, app.cols)
+    app.cellSize = min((app.width-200)/(app.selectedMap.cols), (app.height-100)/(app.selectedMap.rows))
     app.state = 'build'
 
 def loadBuildOne(app):
@@ -122,6 +123,7 @@ def loadBuildOne(app):
 def loadBuildTwo(app):
     f = open('build2.txt', 'r')
     isEmpty = f.read() == ''
+    print(f.read(), '', isEmpty)
     f.close()
     if isEmpty:
         loadMap(app)
@@ -207,8 +209,8 @@ def redrawAll(app):
     elif app.state == 'load':
         drawLoad(app)
     elif app.state == 'build':
-        drawBuildUI(app)
         drawBuildMap(app)
+        drawBuildUI(app)
 
 def drawIntro(app):
     drawRect(0, 0, app.width, app.height, fill='darkblue', opacity=70)
@@ -278,7 +280,6 @@ def drawLoad(app):
             if build1Empty: drawLabel('Empty Build 1', 150+i*buttonWidth + 1/2*buttonWidth, app.height/2+100, fill='white', size=16)
             else: drawLabel('Build 1', 150+i*buttonWidth + 1/2*buttonWidth, app.height/2+100, fill='white', size=16)
         else:
-            print(i, empty[i])
             drawRect(150+i*buttonWidth+gap*i, app.height/2, buttonWidth, 200, fill='midnightblue')
             newButton(app, 150+i*buttonWidth+gap*i, app.height/2, 150+i*buttonWidth+buttonWidth+gap*i, app.height/2+200, loads[i], 'load')
             if empty[i]: drawLabel(f'Empty Build {i+1}', 150+i*buttonWidth+gap*i + buttonWidth/2, app.height/2+100, fill='white', size=16)
@@ -289,7 +290,7 @@ def drawBuildMap(app):
     if app.selectedMap == None:
         return
     drawRect(0,100,app.width-200,app.height-100, fill="gray")
-
+    
     for r in range(app.selectedMap.rows):
             for c in range(app.selectedMap.cols):
                 cell = app.selectedMap.getSquareType(r,c)
@@ -440,11 +441,10 @@ def onKeyRelease(app, keys):
 def onMousePress(app, mouseX, mouseY):
     #check buttons
     if app.state == "build":
-        if mouseY >= 100:
+        if 700 >= mouseY >= 100 and 0 <= mouseX <= 800:
             cellR = (mouseY-100)//app.cellSize
-        if mouseX <= 800:
             cellC = (mouseX-100)//app.cellSize
-        app.selectedMap.setBlock(cellR, cellC, app.blockType)
+            app.selectedMap.setBlock(cellR, cellC, app.blockType)
 
 
     for location in app.buttonLocations:
