@@ -32,9 +32,7 @@ def onAppStart(app):
 
     print(app.selectedMap)
 
-    app.char = Character("main", 100, 100, 70,30)
-    app.cam = Camera(0, 0, 10*40, 16*40)
-
+    
     #buttons
     app.buttonLocations = set()
     app.buttonFunctions = {}
@@ -42,7 +40,7 @@ def onAppStart(app):
     restart(app)
 
 def onStep(app):
-    if app.state == "testing":
+    if app.state == "play":
 
         physics(app,app.char, app.selectedMap)
 
@@ -86,7 +84,10 @@ def physics(app, character, map):
 
 
 def restart(app):
-    app.state = "testing" #intro, build, play
+    app.state = "play" #intro, build, play
+    app.char = Character("main", 100, 100, 70,30)
+    app.cam = Camera(0, 0, 10*40, 16*40)
+
     loadMap(app)
 
 #Loading
@@ -214,32 +215,33 @@ def changeMapWidth(app):
     app.cols = width
 
 def onKeyPress(app, keys):
-    map = app.selectedMap
+    if app.state == "play":
+        map = app.selectedMap
 
-    if "w" in keys:
-        if app.char.botCell < map.rows:
-            if map.getSquareType(app.char.botCell, app.char.leftCell) == "block" or map.getSquareType(app.char.botCell, app.char.rightCell) == "block":
-                app.char.jump()
-    if "d" in keys:
-        if app.char.rightCell < map.cols:
-            # (map.getSquareType(app.char.botCell, app.char.leftCell) == "block" or 
-            #     map.getSquareType(app.char.botCell, app.char.rightCell) == "block")
-            #     and 
-            if (map.getSquareType(app.char.botCell-1, app.char.rightCell) != "block"
-                and map.getSquareType(app.char.topCell, app.char.rightCell) != "block"):
-                app.char.vy = 10
-        elif app.char.rightCell == map.cols:
-            app.char.vy = 0
-    elif "a" in keys:
-        if app.char.leftCell >= 0:
-            #(map.getSquareType(app.char.botCell, app.char.leftCell) == "block" or 
-                #map.getSquareType(app.char.botCell, app.char.rightCell) == "block")
-                #and 
-            if (map.getSquareType(app.char.botCell-1, app.char.leftCell) != "block"
-                and map.getSquareType(app.char.topCell, app.char.leftCell) != "block"):
-                app.char.vy = -10
-        elif app.char.leftCell < 0:
-            app.char.vy = 0
+        if "w" in keys:
+            if app.char.botCell < map.rows:
+                if map.getSquareType(app.char.botCell, app.char.leftCell) == "block" or map.getSquareType(app.char.botCell, app.char.rightCell) == "block":
+                    app.char.jump()
+        if "d" in keys:
+            if app.char.rightCell < map.cols:
+                # (map.getSquareType(app.char.botCell, app.char.leftCell) == "block" or 
+                #     map.getSquareType(app.char.botCell, app.char.rightCell) == "block")
+                #     and 
+                if (map.getSquareType(app.char.botCell-1, app.char.rightCell) != "block"
+                    and map.getSquareType(app.char.topCell, app.char.rightCell) != "block"):
+                    app.char.vy = 10
+            elif app.char.rightCell == map.cols:
+                app.char.vy = 0
+        elif "a" in keys:
+            if app.char.leftCell >= 0:
+                #(map.getSquareType(app.char.botCell, app.char.leftCell) == "block" or 
+                    #map.getSquareType(app.char.botCell, app.char.rightCell) == "block")
+                    #and 
+                if (map.getSquareType(app.char.botCell-1, app.char.leftCell) != "block"
+                    and map.getSquareType(app.char.topCell, app.char.leftCell) != "block"):
+                    app.char.vy = -10
+            elif app.char.leftCell < 0:
+                app.char.vy = 0
     
     if "p" in keys:
         print(map)
