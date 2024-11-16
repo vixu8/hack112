@@ -28,3 +28,6 @@ class Map:
     
     def setBlock(self, row, col, block):
         self.map[row][col] = block
+    
+    def getMap(self):
+        return self.map
