@@ -12,6 +12,8 @@ print(msg)
 print(np.random.randint(1,20))
 
 def onAppStart(app):
+    app.states = "intro" #intro, build, play
+  
     app.width = 1100
     app.height = 700
     
@@ -20,13 +22,20 @@ def onAppStart(app):
 
     restart(app)
 
+
+
 def restart(app):
     app.state = "intro" #intro, build, play
+
+#Loading
+def loadMap(app):
     app.rows = app.cols = 5
     changeMapWidth(app)
     changeMapHeight(app)
     app.map = Map(app.rows, app.cols)
     print(app.map)
+
+#End Loading
 
 #Drawing
 
@@ -38,21 +47,26 @@ def redrawAll(app):
         drawIntro(app)
 
 def drawIntro(app):
-    pass
+    drawRect(0, 0, app.width, app.height, fill='darkblue', opacity=70)
+    drawLabel('STOPDOT', app.width/2, app.height/3, bold=True, size=100, font='arial', fill='white', opacity=50)
+
+    #Buttons
 
 def drawBuildUI(app):
-    drawRect(0, 0, app.width, 100, fill='dark')
-    pass
+    #Menus
+    topMenuWidth = app.width-200
+    borderWidth = 5
+    drawRect(0, 0, topMenuWidth + borderWidth, 100, fill='darkblue', opacity=70, border='black', borderWidth=borderWidth) #top menu
+    drawRect(topMenuWidth, 0, 200, 700, fill='darkblue', opacity=70, border='black', borderWidth=borderWidth) #side bar
+    
+    #Buttons
+
 
 def drawBuildMap(app):
     pass
 
 #End Drawing
-#Loading
-def loadMap(app):
-    pass
 
-#End Loading
 
 def changeMapHeight(app):
     height = app.getTextInput('Enter the height of the map: ')
@@ -84,6 +98,11 @@ def changeMapWidth(app):
         return
     app.cols = width
 
+def onStep(app):
+    pass
+
+def posToCell():
+    pass
 
 def onKeyPress(app, keys):
     pass
