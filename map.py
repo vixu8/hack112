@@ -7,7 +7,7 @@ class Map:
         self.map[rows-2] = [1 for i in range(cols)]
     
     def getSquareType(self, row, col): #gets the type of block that coord is
-        value = self.map[row][col]
+        value = self.map[int(row)][int(col)]
         match value:
             case 0:
                 return "empty"
