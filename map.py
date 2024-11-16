@@ -1,5 +1,7 @@
 class Map:
     def __init__(self, rows, cols):
+        app.rows = rows
+        app.cols = cols
         self.map = [[0 for i in range(cols)] for j in range(rows)]
         self.map[rows-1] = [1 for i in range(cols)]
         self.map[rows-2] = [1 for i in range(cols)]
