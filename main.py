@@ -13,7 +13,17 @@ print(np.random.randint(1,20))
 
 def onAppStart(app):
     app.scene = 'start'
+    app.width = 1100
+    app.height = 700
+
+    
     restart(app)
+
+def onStep(app):
+    pass
+
+def posToCell():
+    pass
 
 def restart(app):
     app.rows = app.cols = 5
