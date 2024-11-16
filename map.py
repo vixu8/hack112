@@ -2,12 +2,12 @@ class Map:
     def __init__(self, rows, cols):
         self.rows = rows
         self.cols = cols
-        self.map = [[0 for i in range(cols)] for j in range(rows)]
-        self.map[rows-1] = [1 for i in range(cols)]
-        self.map[rows-2] = [1 for i in range(cols)]
+        self.map = [[0 for i in range(cols)] for j in range(rows+10)] #10 extra hidden rows on top
+        self.map[rows+9] = [1 for i in range(cols)]
+        self.map[rows+8] = [1 for i in range(cols)]
     
     def getSquareType(self, row, col): #gets the type of block that coord is
-        value = self.map[int(row)][int(col)]
+        value = self.map[int(row)+10][int(col)]
         match value:
             case 0:
                 return "empty"
@@ -27,7 +27,7 @@ class Map:
         return res
     
     def setBlock(self, row, col, block):
-        self.map[row][col] = block
+        self.map[row+10][col] = block
     
     def getMap(self):
         return self.map
