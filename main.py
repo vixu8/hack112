@@ -12,6 +12,7 @@ print(msg)
 print(np.random.randint(1,20))
 
 def onAppStart(app):
+    app.scene = 'start'
     restart(app)
 
 def restart(app):
