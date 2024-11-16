@@ -20,10 +20,11 @@ def onAppStart(app):
   
     app.states = ["intro", 'build', 'play', 'load'] #intro, build, play, load
 
-    app.width = 640
-    app.height = 400
+    app.width = 1100
+    app.height = 700
 
     app.blockPx = 40
+    app.selectedBlock = 0 #0 for air, 1 for wall, 2 for death, 3 spawn, 4 finish
     
     app.map = None
 
@@ -227,6 +228,36 @@ def drawBuildUI(app):
     drawLabel('SAVE', 450, 50, size=saveButtonSize, fill='white', opacity=50)
     newButton(app, 450-saveButtonSize/2, 0, 450+saveButtonSize+50, 50+saveButtonSize, clickSaveBuild, 'build')
 
+    #Air button
+    airButtonSize = 100
+    drawRect(1000-airButtonSize/2, 100-airButtonSize/2, airButtonSize, airButtonSize, fill='white')
+    drawLabel('Air', 1000, 100, size=32, fill='black', opacity=50)
+    newButton(app, 1000-airButtonSize/2, 100-airButtonSize/2, 1000-airButtonSize/2 + airButtonSize, 100-airButtonSize/2 + airButtonSize, clickAir, 'build')
+
+    #Wall button
+    wallButtonSize = 100
+    drawRect(1000-wallButtonSize/2, 233-wallButtonSize/2, wallButtonSize, wallButtonSize, fill='blue')
+    drawLabel('Wall', 1000, 233, size=32, fill='white', opacity=50)
+    newButton(app, 1000-wallButtonSize/2, 100-wallButtonSize/2, 1000-wallButtonSize/2 + wallButtonSize, 100-wallButtonSize/2 + wallButtonSize, clickWall, 'build')
+
+    #Death button
+    airButtonSize = 100
+    drawRect(1000-airButtonSize/2, 366-airButtonSize/2, airButtonSize, airButtonSize, fill='red')
+    drawLabel('Death', 1000, 366, size=32, fill='black', opacity=50)
+    newButton(app, 1000-airButtonSize/2, 100-airButtonSize/2, 1000-airButtonSize/2 + airButtonSize, 100-airButtonSize/2 + airButtonSize, clickDeath, 'build')
+
+    #Spawn button
+    airButtonSize = 100
+    drawRect(1000-airButtonSize/2, 500-airButtonSize/2, airButtonSize, airButtonSize, fill='green')
+    drawLabel('Spawn', 1000, 500, size=32, fill='black', opacity=50)
+    newButton(app, 1000-airButtonSize/2, 100-airButtonSize/2, 1000-airButtonSize/2 + airButtonSize, 100-airButtonSize/2 + airButtonSize, clickSpawn, 'build')
+    
+    #End button
+    airButtonSize = 100
+    drawRect(1000-airButtonSize/2, 633-airButtonSize/2, airButtonSize, airButtonSize, fill='yellow')
+    drawLabel('End', 1000, 633, size=32, fill='black', opacity=50)
+    newButton(app, 1000-airButtonSize/2, 100-airButtonSize/2, 1000-airButtonSize/2 + airButtonSize, 100-airButtonSize/2 + airButtonSize, clickEnd, 'build')
+
 def drawLoad(app):
     drawRect(0, 0, app.width, app.height, fill='darkblue', opacity=70)
     drawLabel('Pick a map to load', app.width/2, app.height/4, bold=True, size=100, font='arial', fill='white', opacity=50)
@@ -262,7 +293,6 @@ def drawLoad(app):
             if build1Empty: drawLabel('Empty Build 1', 150+i*buttonWidth + 1/2*buttonWidth, app.height/2+100, fill='white', size=16)
             else: drawLabel('Build 1', 150+i*buttonWidth + 1/2*buttonWidth, app.height/2+100, fill='white', size=16)
         else:
-            print(i, empty[i])
             drawRect(150+i*buttonWidth+gap*i, app.height/2, buttonWidth, 200, fill='midnightblue')
             newButton(app, 150+i*buttonWidth+gap*i, app.height/2, 150+i*buttonWidth+buttonWidth+gap*i, app.height/2+200, loads[i], 'load')
             if empty[i]: drawLabel(f'Empty Build {i+1}', 150+i*buttonWidth+gap*i + buttonWidth/2, app.height/2+100, fill='white', size=16)
@@ -298,6 +328,11 @@ def newButton(app, toplx, toply, botrx, botry, func, state):
 def clickMenu(app): app.state = 'intro'
 def clickEditBuild(app): app.state = 'build'
 def clickLoadBuild(app): app.state = 'load'
+def clickAir(app): app.selectedBlock = 0
+def clickWall(app): app.selectedBlock = 1
+def clickDeath(app): app.selectedBlock = 2
+def clickSpawn(app): app.selectedBlock = 3
+def clickEnd(app): app.selectedBlock = 4
 def clickSaveBuild(app):
     saveBuilds = {1:saveBuildOne, 2:saveBuildTwo, 3:saveBuildThree, 4:saveBuildFour}
     buildNumber = app.getTextInput('Enter the number (integer) of the build you want to save to: ')
@@ -409,7 +444,7 @@ def onMousePress(app, mouseX, mouseY):
     if app.state == "testing":
         cellR = mouseY//40
         cellC = mouseX//40
-        app.selectedMap.setBlock(cellR, cellC, 1)
+        app.selectedMap.setBlock(cellR, cellC, app.selectedBlock)
 
 
     for location in app.buttonLocations:
